@@ -24,7 +24,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @EnableConfigurationProperties(SecurityProperties.class)
 public class ResourceServer extends ResourceServerConfigurerAdapter {
 
-    private static final String ROOT_PATTERN = "/me/**";
+    private static final String ROOT_PATTERN = "/**";
 
     private final SecurityProperties securityProperties;
 

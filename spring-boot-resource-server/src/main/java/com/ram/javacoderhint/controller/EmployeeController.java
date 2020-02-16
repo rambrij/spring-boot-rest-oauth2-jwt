@@ -50,7 +50,7 @@ public class EmployeeController {
 
 	}
 		
-	@PreAuthorize("permitAll()")  
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostMapping("/employees")
 	ResponseEntity<EmployeeEntity> createOrUpdateEmployee(@RequestBody EmployeeEntity newEmployee) {
 		return repository.findById(newEmployee.getId()).map(employee -> {
@@ -66,7 +66,7 @@ public class EmployeeController {
 		});
 	}
 
-	@PreAuthorize("permitAll()")  
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@DeleteMapping("/employees/{id}")
 	public void deleteEmployee(@PathVariable(value = "id") Long id) throws ResourceNotFoundException {
 		repository.findById(id)
