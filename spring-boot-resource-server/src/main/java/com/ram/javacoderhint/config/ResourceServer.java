@@ -1,5 +1,9 @@
 package com.ram.javacoderhint.config;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.IOException;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +19,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-import java.io.IOException;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import com.ram.javacoderhint.controller.GlobalExceptionHandler;
 
 @Configuration
 @EnableResourceServer
@@ -26,7 +28,7 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
 
     private static final String ROOT_PATTERN = "/**";
 
-    private final SecurityProperties securityProperties;
+    private final SecurityProperties securityProperties;    
 
     private TokenStore tokenStore;
 
@@ -39,23 +41,20 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
         resources.tokenStore(tokenStore());
     }
     
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, ROOT_PATTERN).access("#oauth2.hasScope('read')")
-                .antMatchers(HttpMethod.POST, ROOT_PATTERN).access("#oauth2.hasScope('write')")
-                .antMatchers(HttpMethod.PATCH, ROOT_PATTERN).access("#oauth2.hasScope('write')")
-                .antMatchers(HttpMethod.PUT, ROOT_PATTERN).access("#oauth2.hasScope('write')")
-                .antMatchers(HttpMethod.DELETE, ROOT_PATTERN).access("#oauth2.hasScope('write')");
-        
-        http
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authorizeRequests()
-        .anyRequest().permitAll()
-        .and()
-        .csrf().disable();
-    }
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests().antMatchers(HttpMethod.GET, ROOT_PATTERN).access("#oauth2.hasScope('read')")
+				.antMatchers(HttpMethod.POST, ROOT_PATTERN).access("#oauth2.hasScope('write')")
+				.antMatchers(HttpMethod.PATCH, ROOT_PATTERN).access("#oauth2.hasScope('write')")
+				.antMatchers(HttpMethod.PUT, ROOT_PATTERN).access("#oauth2.hasScope('write')")
+				.antMatchers(HttpMethod.DELETE, ROOT_PATTERN).access("#oauth2.hasScope('write')");
+
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+				.anyRequest().permitAll().and().csrf().disable();
+
+		http.exceptionHandling().authenticationEntryPoint(new GlobalExceptionHandler());
+
+	}
 
     @Bean
     public DefaultTokenServices tokenServices(final TokenStore tokenStore) {

@@ -1,22 +1,33 @@
 package com.ram.javacoderhint.controller;
 
-import java.util.Date;
-
 import org.springframework.http.HttpStatus;
 
 public class ErrorDetails {
 
 	private HttpStatus status;
-	private Date timestamp;
+	private String timestamp;
+
 	private String message;
 	private String details;
 
-	public ErrorDetails(Date timestamp, String message, String details) {
+	public ErrorDetails(String timestamp, String message, String details) {
 		super();
 		this.timestamp = timestamp;
 		this.message = message;
 		this.details = details;
 	}
+	
+	
+
+	public ErrorDetails(HttpStatus status, String timestamp, String message, String details) {
+		super();
+		this.status = status;
+		this.timestamp = timestamp;
+		this.message = message;
+		this.details = details;
+	}
+
+
 
 	public HttpStatus getStatus() {
 		return status;
@@ -26,7 +37,7 @@ public class ErrorDetails {
 		this.status = status;
 	}
 
-	public Date getTimestamp() {
+	public String getTimestamp() {
 		return timestamp;
 	}
 
