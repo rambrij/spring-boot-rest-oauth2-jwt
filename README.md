@@ -4,8 +4,10 @@ Restfull web service: OAuth2 + JWT using Spring Boot 2 / Spring Security 5
 
 How to Test Rest API
 
+First you to mke up and running bothe application spring-boot-resource-server and spring-boot-authorization-server.
+
 You need to creat a json file then copy below josn data into newly created file.
-Open the postman and click on  import and select json file. It will import all required enpoint as well as request parament like header, body etc to test all working enpoints.
+Open the postman and click on  import and select json file. It will import all required enpoint as well as request parament like header, body etc to test all enpoints.
 
 {
 	"info": {
@@ -122,7 +124,7 @@ Open the postman and click on  import and select json file. It will import all r
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": 4,\r\n    \"firstName\": \"Raj\",\r\n    \"lastName\": \"Brij\",\r\n    \"email\": \"howtodoinjava@gmail.com\"\r\n}",
+					"raw": "{\r\n    \"id\": 4,\r\n    \"firstName\": \"Raj\",\r\n    \"lastName\": \"Brij\",\r\n    \"email\": \"ram@gmail.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
