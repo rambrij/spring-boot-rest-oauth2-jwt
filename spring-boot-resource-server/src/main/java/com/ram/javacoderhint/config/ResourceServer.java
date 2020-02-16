@@ -19,14 +19,12 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-import com.ram.javacoderhint.controller.GlobalExceptionHandler;
-
 @Configuration
 @EnableResourceServer
 @EnableConfigurationProperties(SecurityProperties.class)
 public class ResourceServer extends ResourceServerConfigurerAdapter {
 
-    private static final String ROOT_PATTERN = "/**";
+    private static final String ROOT_PATTERN = "/me/**";
 
     private final SecurityProperties securityProperties;    
 
@@ -36,14 +34,17 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
         this.securityProperties = securityProperties;
     }
 
+    
     @Override
     public void configure(final ResourceServerSecurityConfigurer resources) {
+        resources.authenticationEntryPoint(authenticationEntryPoint()); // token failure processor
         resources.tokenStore(tokenStore());
     }
     
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers(HttpMethod.GET, ROOT_PATTERN).access("#oauth2.hasScope('read')")
+		http.authorizeRequests()
+		        .antMatchers(HttpMethod.GET, ROOT_PATTERN).access("#oauth2.hasScope('read')")
 				.antMatchers(HttpMethod.POST, ROOT_PATTERN).access("#oauth2.hasScope('write')")
 				.antMatchers(HttpMethod.PATCH, ROOT_PATTERN).access("#oauth2.hasScope('write')")
 				.antMatchers(HttpMethod.PUT, ROOT_PATTERN).access("#oauth2.hasScope('write')")
@@ -51,9 +52,21 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
 
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
 				.anyRequest().permitAll().and().csrf().disable();
+		
+		http.exceptionHandling().accessDeniedHandler(accessDeniedHandler())
+				.authenticationEntryPoint(authenticationEntryPoint());
 
-		http.exceptionHandling().authenticationEntryPoint(new GlobalExceptionHandler());
+	}
+	
+	  
+	@Bean
+	RestAccessDeniedHandler accessDeniedHandler() {
+		return new RestAccessDeniedHandler();
+	}
 
+	@Bean
+	RestAuthenticationEntryPoint authenticationEntryPoint() {
+		return new RestAuthenticationEntryPoint();
 	}
 
     @Bean
